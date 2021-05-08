@@ -1,60 +1,64 @@
-const formSubmit = document.getElementById('comment-form');
+const counter = document.getElementById('counter');
+const incrementButton = document.getElementById('plus');
+const decrementButton = document.getElementById('minus');
+const heartButton = document.getElementById('heart');
+const likesList = document.querySelector('.likes');
+const submitButton = document.getElementById('submit');
+const commentForm = document.getElementById('comment-form');
 const commentList = document.getElementById('list');
-const pauseButton = document.getElementById('pause')
-let counter = document.getElementById('counter');
-const incrementButton = document.getElementById('plus')
-const decrementButton = document.getElementById('minus')
-const likeButton = document.getElementById('heart')
-const likedList = document.querySelector('.likes')
+const commentInput = document.getElementById('comment-input')
+const pauseButton = document.getElementById('pause');
 
-function disable(element){ element.setAttribute("disabled",""); }
-function enable(element){ element.removeAttribute("disabled"); }
+let intervalTimer = setInterval(incrementTimer, 1000)
 
-let timer = setInterval( () => {
-    counter.innerText = ++counter.innerText}, 1000)
+incrementButton.addEventListener("click", incrementTimer)
 
+function incrementTimer(){
+    counter.innerText = ++counter.innerText
+}
 
-const add = incrementButton.addEventListener('click', () => {
-    ++counter.innerText;
+decrementButton.addEventListener('click', () => {
+    counter.innerText = --counter.innerText;
 })
 
-const subtract = decrementButton.addEventListener('click', () => {
-    --counter.innerText;
+heartButton.addEventListener('click', likeNum) 
+
+function likeNum(){
+    const foundLi = document.querySelector(`li[data-num = "${counter.innerText}"]`)
+    if (!foundLi) {
+        const li = document.createElement('li');
+        li.dataset.num = counter.innerText;
+        li.innerHTML = `${counter.innerText} has been liked <span>1</span> times`;
+        likesList.append(li);
+    } else {
+        foundLi.children[0].innerText = ++foundLi.children[0].innerText;
+    }
+}
+
+pauseButton.addEventListener('click', (e) => {
+    if (e.target.innerText === 'pause') {
+        clearInterval(intervalTimer);
+        e.target.innerText = 'resume'
+        incrementButton.disabled = true; 
+        decrementButton.disabled = true;
+        heartButton.disabled = true; 
+        submitButton.disabled = true;
+ }  else {
+        intervalTimer = setInterval(incrementTimer, 1000)
+        e.target.innerText = 'pause';
+        incrementButton.disabled = false;
+        decrementButton.disabled = false;
+        heartButton.disabled = false;
+        submitButton.disabled = false;
+        
+} 
 })
 
-const likes = likeButton.addEventListener('click', () => {
-    let buttonClicks = 0;
-    buttonClicks += 1;
-    const currentCount = counter.innerText;
-    const numLiked = document.createElement('li');
-    numLiked.textContent = `${currentCount} has been liked ${buttonClicks} times`;
-    likedList.append(numLiked);
-})
 
-const pause = pauseButton.addEventListener('click', () => {
-    clearInterval(timer);
-  
-    pauseButton.innerText = 'resume'
-    
-    if (pauseButton.innerText === 'resume') {
-           
-            
-        }
-})
-
-
-
-
-formSubmit.addEventListener('submit', (e) => {
+commentForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const newComment = e.target.querySelector('#comment-input').value;
-    const comments = document.createElement('div');
-    comments.textContent = newComment;
-    document.forms['comment-form'].reset() 
-    commentList.append(comments)
+    const pTag = document.createElement('p')
+    pTag.innerText = commentInput.value
+    commentList.appendChild(pTag)
+    e.target.reset()
 })
-
-  // disable(incrementButton); 
-    // disable(decrementButton); 
-    // disable(likeButton); 
-    // disable(submitButton);
